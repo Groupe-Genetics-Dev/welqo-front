@@ -342,7 +342,7 @@ export default function HomePage() {
             </span>
           </h2>
           <p className="text-lg sm:text-xl text-gray-100 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed drop-shadow-lg">
-            <span className="font-semibold text-[#efb83b]">Welqo</span> est une solution numérique complète pour gérer
+            <span className="font-semibold text-[#efb83b]">Notre solution</span> est une solution numérique complète pour gérer
             les visiteurs, suivre les gardiens et améliorer la sécurité de votre bâtiment grâce aux QR codes
             intelligents.
           </p>
@@ -352,20 +352,18 @@ export default function HomePage() {
               className="bg-white/95 text-[#082038] hover:bg-white hover:scale-105 px-6 sm:px-8 text-sm sm:text-base shadow-xl transition-all duration-300 font-semibold"
               onClick={() => scrollToSection("fonctionnement")}
             >
-              Découvrir Welqo
+              Découvrir
             </Button>
             <Button
               size="lg"
               className="bg-[#efb83b] text-white hover:bg-[#d4a730] hover:scale-105 px-6 sm:px-8 text-sm sm:text-base shadow-xl transition-all duration-300 font-semibold"
               onClick={() => {
-                // Code pour télécharger le fichier de démo
                 window.open('/path/to/your/demo/file.pdf', '_blank');
               }}
             >
               Télécharger la Démo
             </Button>
           </div>
-
         </div>
       </section>
 
@@ -383,8 +381,8 @@ export default function HomePage() {
               fonctionne ?
             </h3>
             <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
-              Un processus simple en 4 étapes pour révolutionner la gestion de votre immeuble avec{" "}
-              <span className="font-semibold text-[#efb83b]">Welqo</span>
+              Un processus simple en 4 étapes pour révolutionner la gestion de votre immeuble avec
+              <span className="font-semibold text-[#efb83b]">notre solution</span>
             </p>
           </div>
 
@@ -393,23 +391,23 @@ export default function HomePage() {
               {
                 icon: QrCode,
                 title: "1. Générer le QR Code",
-                description: "Le résident crée un QR code sécurisé pour son visiteur via l'application Welqo",
+                description: "Le résident crée un QR code sécurisé pour son visiteur via l'application",
               },
               {
                 icon: Smartphone,
                 title: "2. Scanner à l'entrée",
-                description: "Le gardien scanne le QR code avec l'interface Welqo sur son smartphone",
+                description: "Le gardien scanne le QR code avec l'interface sur son smartphone",
               },
               {
                 icon: Shield,
                 title: "3. Validation automatique",
-                description: "Welqo vérifie automatiquement les autorisations et valide ou refuse l'accès",
+                description: "Notre solution vérifie automatiquement les autorisations et valide ou refuse l'accès",
               },
               {
-                icon: Bell,
-                title: "4. Notification instantanée",
-                description: "Le résident reçoit une notification Welqo confirmant l'arrivée de son visiteur",
-              },
+                icon: BarChart3, 
+                title: "4. Génération de rapports automatiques",
+                description: "Le syndic reçoit des rapports automatiques pour un suivi efficace",
+              }
             ].map((step, index) => (
               <div key={index} className="text-center group hover:scale-105 transition-transform duration-300">
                 <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-[#efb83b]/20 to-[#efb83b]/20 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg group-hover:shadow-xl transition-shadow border border-[#efb83b]/30">
@@ -423,77 +421,75 @@ export default function HomePage() {
         </div>
       </section>
 
-     <section
-  id="fonctionnalites"
-  className="relative z-10 py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8"
->
-  <div className="container mx-auto max-w-6xl">
-    <div className="text-center mb-12 sm:mb-16">
-      <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4 drop-shadow-lg">
-        Les fonctionnalités{" "}
-        <span className="bg-gradient-to-r from-[#efb83b] to-[#efb83b] bg-clip-text text-transparent font-extrabold">
-          Welqo
-        </span>
-      </h3>
-      <p className="text-base sm:text-lg text-gray-100 drop-shadow-md">
-        Découvrez tout ce que <span className="font-semibold text-[#efb83b]">Welqo</span> peut faire pour
-        optimiser la gestion de votre résidence
-      </p>
-    </div>
+      <section
+        id="fonctionnalites"
+        className="relative z-10 py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8"
+      >
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12 sm:mb-16">
+            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4 drop-shadow-lg">
+              Les fonctionnalités
+              <span className="bg-gradient-to-r from-[#efb83b] to-[#efb83b] bg-clip-text text-transparent font-extrabold">
+                Welqo
+              </span>
+            </h3>
+            <p className="text-base sm:text-lg text-gray-100 drop-shadow-md">
+              Découvrez tout ce que <span className="font-semibold text-[#efb83b]">notre solution</span> peut faire pour
+              optimiser la gestion de votre résidence
+            </p>
+          </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-      {[
-        {
-          icon: QrCode,
-          title: "Gestion des Visiteurs",
-          description: "QR codes sécurisés Welqo pour un contrôle d'accès automatisé",
-        },
-        {
-          icon: UserCheck,
-          title: "Suivi des Gardiens",
-          description: "Pointage automatique et géolocalisation avec Welqo",
-        },
-        {
-          icon: ClipboardList,
-          title: "Signalement d'Incidents",
-          description: "Rapports en temps réel avec photos via Welqo",
-        },
-        {
-          icon: Bell,
-          title: "Notifications",
-          description: "Alertes Welqo en temps réel pour tous les utilisateurs",
-        },
-        {
-          icon: BarChart3,
-          title: "Tableau de Bord",
-          description: "Statistiques et rapports détaillés Welqo",
-        },
-        {
-          icon: Building,
-          title: "Multi-Immeubles",
-          description: "Gérez plusieurs bâtiments depuis une interface Welqo unifiée",
-        },
-      ].map((feature, index) => (
-        <Card
-          key={index}
-          className="border-[#efb83b]/30 bg-white/95 backdrop-blur-md hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:bg-white"
-        >
-          <CardHeader className="pb-3 text-center">
-            <div className="flex justify-center mb-2">
-              <feature.icon className="w-8 h-8 sm:w-10 sm:h-10 text-[#082038] mx-auto" />
-            </div>
-            <CardTitle className="text-lg sm:text-xl">{feature.title}</CardTitle>
-            <CardDescription className="text-sm sm:text-base">{feature.description}</CardDescription>
-          </CardHeader>
-        </Card>
-      ))}
-    </div>
-  </div>
-</section>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+            {[
+              {
+                icon: QrCode,
+                title: "Gestion des Visiteurs",
+                description: "QR codes sécurisés pour un contrôle d'accès automatisé",
+              },
+              {
+                icon: UserCheck,
+                title: "Suivi des Gardiens",
+                description: "Pointage automatique et géolocalisation",
+              },
+              {
+                icon: ClipboardList,
+                title: "Signalement d'Incidents",
+                description: "Rapports en temps réel avec photos",
+              },
+              {
+                icon: Bell,
+                title: "Notifications",
+                description: "Alertes en temps réel pour tous les utilisateurs",
+              },
+              {
+                icon: BarChart3,
+                title: "Tableau de Bord",
+                description: "Statistiques et rapports détaillés",
+              },
+              {
+                icon: Building,
+                title: "Multi-Immeubles",
+                description: "Gérez plusieurs bâtiments depuis une interface unifiée",
+              },
+            ].map((feature, index) => (
+              <Card
+                key={index}
+                className="border-[#efb83b]/30 bg-white/95 backdrop-blur-md hover:shadow-2xl transition-all duration-300 hover:scale-105 hover:bg-white"
+              >
+                <CardHeader className="pb-3 text-center">
+                  <div className="flex justify-center mb-2">
+                    <feature.icon className="w-8 h-8 sm:w-10 sm:h-10 text-[#082038] mx-auto" />
+                  </div>
+                  <CardTitle className="text-lg sm:text-xl">{feature.title}</CardTitle>
+                  <CardDescription className="text-sm sm:text-base">{feature.description}</CardDescription>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
 
-
-
-            <section
+      <section
         id="utilisateurs"
         className="relative z-10 py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-white/95 backdrop-blur-md"
       >
@@ -506,7 +502,7 @@ export default function HomePage() {
               pour tous les utilisateurs
             </h3>
             <p className="text-base sm:text-lg text-gray-600">
-              Une interface <span className="font-semibold text-[#efb83b]">Welqo</span> adaptée à chaque profil
+              Une interface <span className="font-semibold text-[#efb83b]">adaptée</span> à chaque profil
               d'utilisateur
             </p>
           </div>
@@ -516,25 +512,25 @@ export default function HomePage() {
               {
                 icon: Shield,
                 title: "Gardiens",
-                description: "Interface Welqo simple et intuitive",
+                description: "Interface simple et intuitive",
                 color: "[#082038]",
-                buttonText: "Accéder à l'interface Gardien Welqo",
+                buttonText: "Accéder à l'interface Gardien",
                 href: "/gardiens/login",
               },
               {
                 icon: Users,
                 title: "Résidents",
-                description: "Contrôle total de vos visiteurs avec Welqo",
+                description: "Contrôle total de vos visiteurs",
                 color: "[#efb83b]",
-                buttonText: "Accéder à l'espace Résident Welqo",
+                buttonText: "Accéder à l'espace Résident",
                 href: "/residents/login",
               },
               {
                 icon: BarChart3,
                 title: "Gestionnaires",
-                description: "Vue d'ensemble et contrôle total via Welqo",
+                description: "Vue d'ensemble et contrôle total",
                 color: "[#082038]",
-                buttonText: "Accéder au tableau de bord Welqo",
+                buttonText: "Accéder au tableau de bord",
                 href: "/syndic/login",
               },
             ].map((user, index) => (
@@ -565,7 +561,6 @@ export default function HomePage() {
         </div>
       </section>
 
-
       <section
         id="contact"
         className="relative z-10 py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-[#082038]/95 to-[#082038]/95 backdrop-blur-sm"
@@ -579,7 +574,7 @@ export default function HomePage() {
             ?
           </h3>
           <p className="text-lg sm:text-xl text-gray-100 mb-6 sm:mb-8 leading-relaxed drop-shadow-md">
-            Rejoignez les gestionnaires qui ont déjà adopté <span className="font-semibold text-[#efb83b]">Welqo</span>{" "}
+            Rejoignez les gestionnaires qui ont déjà adopté <span className="font-semibold text-[#efb83b]">notre solution</span>{" "}
             pour simplifier leur quotidien
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center max-w-md sm:max-w-none mx-auto">
@@ -587,14 +582,14 @@ export default function HomePage() {
               size="lg"
               className="bg-white text-[#082038] hover:bg-gray-50 hover:scale-105 px-6 sm:px-8 text-sm sm:text-base shadow-xl transition-all duration-300 font-semibold"
             >
-              Demander une démo Welqo
+              Demander une démo
             </Button>
             <Button
               size="lg"
               className="bg-white/20 text-white hover:bg-white/30 px-6 sm:px-8 text-sm sm:text-base shadow-xl transition-all duration-300 font-semibold border border-white"
               onClick={() => window.open("https://groupegenetics.com/#contact", "_blank")}
             >
-              Contactez l'équipe Welqo
+              Contactez l'équipe
             </Button>
           </div>
         </div>
@@ -617,13 +612,13 @@ export default function HomePage() {
                 </div>
               </div>
               <p className="text-sm sm:text-base text-gray-400 mb-4 leading-relaxed">
-                <span className="font-semibold text-[#efb83b]">Welqo</span> est la solution complète pour la gestion
+                <span className="font-semibold text-[#efb83b]">Notre solution</span> est la solution complète pour la gestion
                 intelligente de vos immeubles avec QR codes.
               </p>
             </div>
 
             <div>
-              <h5 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Fonctionnalités Welqo</h5>
+              <h5 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Fonctionnalités</h5>
               <ul className="space-y-2 text-xs sm:text-sm text-gray-400">
                 <li>Gestion visiteurs</li>
                 <li>Suivi gardiens</li>
@@ -633,7 +628,7 @@ export default function HomePage() {
             </div>
 
             <div>
-              <h5 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Support Welqo</h5>
+              <h5 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Support</h5>
               <ul className="space-y-2 text-xs sm:text-sm text-gray-400">
                 <li>Documentation</li>
                 <li>Formation</li>
@@ -677,3 +672,4 @@ export default function HomePage() {
     </div>
   )
 }
+
