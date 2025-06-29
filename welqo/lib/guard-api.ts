@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://korka-dev.com:8000/api/v1"
+const API_BASE_URL = "http://95.111.231.146:8000/api/v1"
 
 // Types corrigés et ajustés au backend
 export interface GuardBase {
