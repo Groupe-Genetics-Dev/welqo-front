@@ -2,7 +2,11 @@ services:
   nextjs:
     build: .
     container_name: nextjs
-  
+    expose:
+      - "3000"
+    environment:
+      - NODE_ENV=production
+
   nginx:
     image: nginx:alpine
     container_name: nginx
