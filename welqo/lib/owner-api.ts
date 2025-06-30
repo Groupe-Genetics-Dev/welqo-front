@@ -63,7 +63,7 @@ export class APIError extends Error {
 }
 
 export class OwnerApiClient {
-  private static API_BASE_URL = 'http://korka-dev.com:8000/api/v1';
+  private static API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   // Fonction utilitaire pour gérer les réponses
   private static async handleResponse<T>(response: Response): Promise<T> {

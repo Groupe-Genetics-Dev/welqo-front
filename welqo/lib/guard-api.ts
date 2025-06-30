@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://korka-dev.com:8000/api/v1"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 // Types corrigés et ajustés au backend
 export interface GuardBase {
@@ -105,7 +105,7 @@ class GuardApiClient {
   private token: string | null = null
 
   constructor() {
-    this.baseURL = API_BASE_URL
+    this.baseURL = API_BASE_URL ?? ""
     this.token = this.getStoredToken()
   }
 
