@@ -111,7 +111,7 @@ function AccessPage() {
 
   const generate = () => {
     if (accessData) {
-      // FIX: Générer un QR code avec les informations structurées au lieu de juste l'ID
+      
       const qrData = JSON.stringify({
         id: id,
         type: "welqo_access",
@@ -131,8 +131,8 @@ function AccessPage() {
 
       QRCode.toDataURL(qrData, {
         errorCorrectionLevel: "H",
-        width: 256,
-        margin: 2,
+        width: 95,
+        margin: 4,
         color: {
           dark: '#000000',
           light: '#FFFFFF'

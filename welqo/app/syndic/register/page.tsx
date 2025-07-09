@@ -12,6 +12,10 @@ import { ArrowLeft, Eye, EyeOff, Building } from "lucide-react"
 import Image from "next/image"
 import { OwnerApiClient } from "@/lib/owner-api"
 
+const countryCodes = [
+  { code: "+221", name: "Senegal", flag: "🇸🇳" },
+]
+
 export default function OwnerRegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -26,46 +30,48 @@ export default function OwnerRegisterPage() {
   })
 
   const [isLoading, setIsLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
+  const [successMessage, setSuccessMessage] = useState("")
   const router = useRouter()
 
-  const countryCodes = [
-    { code: "+1", name: "USA" },
-    { code: "+44", name: "UK" },
-    { code: "+33", name: "France" },
-    { code: "+221", name: "Senegal" },
-  ]
-
-  const validatePhoneNumber = (phone: string) => {
+  const validatePhoneNumber = (phone) => {
     const phoneRegex = /^[0-9]{8,15}$/
     return phoneRegex.test(phone)
   }
 
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
+    setErrorMessage("")
+    setSuccessMessage("")
+
     if (!formData.name.trim()) {
-      console.error("Le nom est requis")
+      const message = "Le nom est requis"
+      setErrorMessage(message)
       return
     }
 
     if (!formData.phoneNumber.trim()) {
-      console.error("Le numéro de téléphone est requis")
+      const message = "Le numéro de téléphone est requis"
+      setErrorMessage(message)
       return
     }
 
     if (!validatePhoneNumber(formData.phoneNumber)) {
-      console.error("Veuillez entrer un numéro de téléphone valide")
+      const message = "Veuillez entrer un numéro de téléphone valide"
+      setErrorMessage(message)
       return
     }
 
     if (formData.password.length < 8) {
-      console.error("Le mot de passe doit contenir au moins 8 caractères")
+      const message = "Le mot de passe doit contenir au moins 8 caractères"
+      setErrorMessage(message)
       return
     }
 
     if (formData.password !== formData.confirmPassword) {
-      console.error("Les mots de passe ne correspondent pas")
+      const message = "Les mots de passe ne correspondent pas"
+      setErrorMessage(message)
       return
     }
 
@@ -79,29 +85,21 @@ export default function OwnerRegisterPage() {
       }
 
       const newOwner = await OwnerApiClient.createOwner(ownerData)
-      router.push("/syndic/login")
-
+      const message = "Inscription réussie"
+      setSuccessMessage(message)
+      setTimeout(() => {
+        router.push("/syndic/login")
+      }, 3000)
     } catch (error) {
-      console.error("Erreur lors de la création du compte:", error)
+      const message = "Erreur lors de la création du compte"
+      setErrorMessage(message)
     } finally {
       setIsLoading(false)
     }
   }
 
-  interface OwnerRegisterFormData {
-    name: string
-    email: string
-    countryCode: string
-    phoneNumber: string
-    company: string
-    password: string
-    confirmPassword: string
-  }
-
-  type OwnerRegisterFormField = keyof OwnerRegisterFormData
-
-  const handleInputChange = (field: OwnerRegisterFormField, value: string) => {
-    setFormData((prev: OwnerRegisterFormData) => ({
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({
       ...prev,
       [field]: value
     }))
@@ -109,6 +107,48 @@ export default function OwnerRegisterPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center p-4">
+      {errorMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4">
+          <div className="bg-red-500 text-white p-4 rounded-lg shadow-lg flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+              <span className="text-sm font-medium">{errorMessage}</span>
+            </div>
+            <button
+              onClick={() => setErrorMessage("")}
+              className="ml-4 text-white hover:text-red-200 flex-shrink-0"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {successMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4">
+          <div className="bg-green-500 text-white p-4 rounded-lg shadow-lg flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span className="text-sm font-medium">{successMessage}</span>
+            </div>
+            <button
+              onClick={() => setSuccessMessage("")}
+              className="ml-4 text-white hover:text-green-200 flex-shrink-0"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="w-full max-w-md">
         <div className="flex items-center justify-center mb-6 sm:mb-8">
           <div className="flex items-center space-x-3">
@@ -139,7 +179,7 @@ export default function OwnerRegisterPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-white">
-                  Nom complet *
+                  Nom complet 
                 </Label>
                 <Input
                   id="name"
@@ -154,7 +194,7 @@ export default function OwnerRegisterPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="phoneNumber" className="text-white">
-                  Numéro de téléphone *
+                  Numéro de téléphone 
                 </Label>
                 <div className="flex space-x-2">
                   <Select
@@ -168,7 +208,10 @@ export default function OwnerRegisterPage() {
                     <SelectContent className="bg-slate-700 text-white">
                       {countryCodes.map((country) => (
                         <SelectItem key={country.code} value={country.code}>
-                          {country.code} {country.name}
+                          <span className="flex items-center space-x-2">
+                            <span>{country.flag}</span>
+                            <span>{country.code}</span>
+                          </span>
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -176,7 +219,7 @@ export default function OwnerRegisterPage() {
                   <Input
                     id="phoneNumber"
                     type="tel"
-                    placeholder="123456789"
+                    placeholder="Entrer votre numéro de téléphone"
                     value={formData.phoneNumber}
                     onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
                     className="flex-1 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
@@ -188,7 +231,7 @@ export default function OwnerRegisterPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-white">
-                  Mot de passe *
+                  Mot de passe 
                 </Label>
                 <div className="relative">
                   <Input
@@ -217,7 +260,7 @@ export default function OwnerRegisterPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword" className="text-white">
-                  Confirmer le mot de passe *
+                  Confirmer le mot de passe 
                 </Label>
                 <div className="relative">
                   <Input

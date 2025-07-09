@@ -1,43 +1,29 @@
-"use client"
+"use client";
 
-import type React from "react"
-
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, Eye, EyeOff } from "lucide-react"
-import Image from "next/image"
-import { apiClient } from "@/lib/api"
-import { useToast } from "@/hooks/use-toast"
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import Image from "next/image";
+import { apiClient } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 const countryCodeOptions = [
-  { code: "+33", country: "France", flag: "🇫🇷" },
-  { code: "+1", country: "États-Unis", flag: "🇺🇸" },
-  { code: "+44", country: "Royaume-Uni", flag: "🇬🇧" },
-  { code: "+49", country: "Allemagne", flag: "🇩🇪" },
-  { code: "+39", country: "Italie", flag: "🇮🇹" },
-  { code: "+34", country: "Espagne", flag: "🇪🇸" },
-  { code: "+32", country: "Belgique", flag: "🇧🇪" },
-  { code: "+41", country: "Suisse", flag: "🇨🇭" },
-  { code: "+31", country: "Pays-Bas", flag: "🇳🇱" },
-  { code: "+43", country: "Autriche", flag: "🇦🇹" },
-  { code: "+351", country: "Portugal", flag: "🇵🇹" },
-  { code: "+212", country: "Maroc", flag: "🇲🇦" },
-  { code: "+213", country: "Algérie", flag: "🇩🇿" },
-  { code: "+216", country: "Tunisie", flag: "🇹🇳" },
   { code: "+221", country: "Sénégal", flag: "🇸🇳" },
   { code: "+225", country: "Côte d'Ivoire", flag: "🇨🇮" },
   { code: "+237", country: "Cameroun", flag: "🇨🇲" },
-]
+];
 
 export default function RegisterPage() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     countryCode: "+221",
@@ -45,32 +31,44 @@ export default function RegisterPage() {
     appartement: "",
     password: "",
     confirmPassword: "",
-  })
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
-  const { showToast } = useToast()
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const { showToast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-    const fullPhoneNumber = formData.countryCode + formData.phone_number
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    const fullPhoneNumber = formData.countryCode + formData.phone_number;
 
     if (formData.password !== formData.confirmPassword) {
-      showToast("Les mots de passe ne correspondent pas", "error")
-      return
+      const message = "Les mots de passe ne correspondent pas";
+      setErrorMessage(message);
+      showToast(message, "error");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
 
     if (formData.password.length < 6) {
-      showToast("Le mot de passe doit contenir au moins 6 caractères", "error")
-      return
+      const message = "Le mot de passe doit contenir au moins 6 caractères";
+      setErrorMessage(message);
+      showToast(message, "error");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
 
     if (!formData.phone_number.match(/^[0-9]{8,12}$/)) {
-      showToast("Veuillez entrer un numéro de téléphone valide", "error")
-      return
+      const message = "Veuillez entrer un numéro de téléphone valide";
+      setErrorMessage(message);
+      showToast(message, "error");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       const response = await apiClient.register({
@@ -78,25 +76,76 @@ export default function RegisterPage() {
         phone_number: fullPhoneNumber,
         appartement: formData.appartement,
         password: formData.password,
-      })
+      });
 
       if (response.error) {
-        showToast(response.error, "error")
+        setErrorMessage(response.error);
+        showToast(response.error, "error");
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        showToast("Inscription réussie ! Vous pouvez maintenant vous connecter.", "success")
-        router.push("/residents/login")
+        const message = "Inscription réussie ! Vous pouvez maintenant vous connecter.";
+        setSuccessMessage(message);
+        showToast(message, "success");
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => {
+          router.push("/residents/login");
+        }, 3000);
       }
     } catch (error) {
-      showToast("Une erreur inattendue est survenue", "error")
+      const message = "Une erreur inattendue est survenue";
+      setErrorMessage(message);
+      showToast(message, "error");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center p-4">
+      {errorMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4">
+          <div className="bg-red-500 text-white p-4 rounded-lg shadow-lg flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+              <span className="text-sm font-medium">{errorMessage}</span>
+            </div>
+            <button
+              onClick={() => setErrorMessage("")}
+              className="ml-4 text-white hover:text-red-200 flex-shrink-0"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {successMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4">
+          <div className="bg-green-500 text-white p-4 rounded-lg shadow-lg flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span className="text-sm font-medium">{successMessage}</span>
+            </div>
+            <button
+              onClick={() => setSuccessMessage("")}
+              className="ml-4 text-white hover:text-green-200 flex-shrink-0"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="w-full max-w-md">
-        {/* Header */}
         <div className="flex items-center justify-center mb-6 sm:mb-8">
           <Image
             src="/logo-alt.jpeg"
@@ -261,5 +310,6 @@ export default function RegisterPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
+

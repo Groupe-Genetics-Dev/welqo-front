@@ -37,10 +37,8 @@ function GuardDashboardContent() {
   const loadDashboardData = async () => {
     try {
       setError(null)
-      console.log("=== CHARGEMENT DONNÉES DASHBOARD ===")
 
       const statsResponse = await guardApiClient.getGuardStats()
-      console.log("Réponse stats:", statsResponse)
 
       if (statsResponse.error) {
         throw new Error(statsResponse.error)
@@ -48,17 +46,14 @@ function GuardDashboardContent() {
 
       if (statsResponse.data) {
         setStats(statsResponse.data)
-        console.log("Stats chargées:", statsResponse.data)
       }
 
       const activityResponse = await guardApiClient.getScanHistory(5)
-      console.log("Réponse activité récente:", activityResponse)
 
       if (activityResponse.error) {
         console.warn("Erreur lors du chargement de l'activité:", activityResponse.error)
       } else if (activityResponse.data) {
         setRecentActivity(activityResponse.data)
-        console.log("Activité récente chargée:", activityResponse.data)
       }
     } catch (error) {
       console.error("Erreur lors du chargement des données:", error)

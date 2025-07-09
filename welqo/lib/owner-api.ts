@@ -63,7 +63,7 @@ export class APIError extends Error {
 }
 
 export class OwnerApiClient {
-  private static API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  private static API_BASE_URL = "https://welqo-api.onrender.com/api/v1";
 
   // Fonction utilitaire pour gérer les réponses
   private static async handleResponse<T>(response: Response): Promise<T> {

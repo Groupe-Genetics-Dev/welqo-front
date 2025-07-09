@@ -1,80 +1,126 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, Eye, EyeOff } from "lucide-react"
-import Image from "next/image"
-import { useAuth } from "@/hooks/use-auth"
-import { useToast } from "@/hooks/use-toast"
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import Image from "next/image";
+import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 
-const countryCodeOptions = [
-  { code: "+33", country: "France", flag: "🇫🇷" },
-  { code: "+1", country: "États-Unis", flag: "🇺🇸" },
-  { code: "+44", country: "Royaume-Uni", flag: "🇬🇧" },
-  { code: "+49", country: "Allemagne", flag: "🇩🇪" },
-  { code: "+39", country: "Italie", flag: "🇮🇹" },
-  { code: "+34", country: "Espagne", flag: "🇪🇸" },
-  { code: "+32", country: "Belgique", flag: "🇧🇪" },
-  { code: "+41", country: "Suisse", flag: "🇨🇭" },
-  { code: "+31", country: "Pays-Bas", flag: "🇳🇱" },
-  { code: "+43", country: "Autriche", flag: "🇦🇹" },
-  { code: "+351", country: "Portugal", flag: "🇵🇹" },
-  { code: "+212", country: "Maroc", flag: "🇲🇦" },
-  { code: "+213", country: "Algérie", flag: "🇩🇿" },
-  { code: "+216", country: "Tunisie", flag: "🇹🇳" },
+const countryCodeOptions = [ 
   { code: "+221", country: "Sénégal", flag: "🇸🇳" },
-  { code: "+225", country: "Côte d'Ivoire", flag: "🇨🇮" },
-  { code: "+237", country: "Cameroun", flag: "🇨🇲" },
-]
+];
+
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     countryCode: "+221",
     phone_number: "",
     password: "",
-  })
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
-  const { login } = useAuth()
-  const { showToast } = useToast()
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const router = useRouter();
+  const { login } = useAuth();
+  const { showToast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+    e.preventDefault();
+
+    setErrorMessage("");
+    setSuccessMessage("");
 
     if (!formData.phone_number || !formData.password) {
-      showToast("Veuillez remplir tous les champs", "error")
-      return
+      const message = "Veuillez remplir tous les champs";
+      setErrorMessage(message);
+      showToast(message, "error");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
-    const fullPhoneNumber = formData.countryCode + formData.phone_number
+    const fullPhoneNumber = formData.countryCode + formData.phone_number;
 
     try {
-      const result = await login(fullPhoneNumber, formData.password)
+      const result = await login(fullPhoneNumber, formData.password);
 
       if (result.success) {
-        showToast("Connexion réussie", "success")
-        router.push("/residents/dashboard")
+        const message = "Connexion réussie";
+        setSuccessMessage(message);
+        showToast(message, "success");
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => {
+          router.push("/residents/dashboard");
+        }, 3000);
       } else {
-        showToast(result.error || "Erreur de connexion", "error")
+        const message = result.error || "Erreur de connexion";
+        setErrorMessage(message);
+        showToast(message, "error");
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     } catch (error) {
-      showToast("Une erreur inattendue est survenue", "error")
+      const message = "Une erreur inattendue est survenue";
+      setErrorMessage(message);
+      showToast(message, "error");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center p-4">
+      {errorMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4">
+          <div className="bg-red-500 text-white p-4 rounded-lg shadow-lg flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+              <span className="text-sm font-medium">{errorMessage}</span>
+            </div>
+            <button
+              onClick={() => setErrorMessage("")}
+              className="ml-4 text-white hover:text-red-200 flex-shrink-0"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {successMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4">
+          <div className="bg-green-500 text-white p-4 rounded-lg shadow-lg flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span className="text-sm font-medium">{successMessage}</span>
+            </div>
+            <button
+              onClick={() => setSuccessMessage("")}
+              className="ml-4 text-white hover:text-green-200 flex-shrink-0"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="w-full max-w-md">
         <div className="flex items-center justify-center mb-6 sm:mb-8">
           <Image
@@ -192,6 +238,6 @@ export default function LoginPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
 

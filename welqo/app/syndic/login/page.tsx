@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ArrowLeft, Eye, EyeOff, Building, AlertTriangle, CheckCircle } from "lucide-react";
+import { Eye, EyeOff, Building, ArrowLeft, AlertTriangle, CheckCircle } from "lucide-react";
 import Image from "next/image";
 import { OwnerApiClient } from "@/lib/owner-api";
 
@@ -22,14 +21,12 @@ export default function OwnerLoginPage() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const countryCodes = [
-    { code: "+1", name: "USA" },
-    { code: "+44", name: "UK" },
-    { code: "+33", name: "France" },
-    { code: "+221", name: "Senegal" },
+
+    { code: "+221", name: "Senegal", flag: "🇸🇳" },
   ];
 
   useEffect(() => {
@@ -40,7 +37,7 @@ export default function OwnerLoginPage() {
     }
   }, [router]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -69,7 +66,7 @@ export default function OwnerLoginPage() {
         if (tokenInfo) {
           localStorage.setItem(
             "owner_username",
-            (tokenInfo as any).username || (tokenInfo as any).userId || credentials.username
+            tokenInfo.username || tokenInfo.userId || credentials.username
           );
           console.log("Informations du token:", tokenInfo);
         }
@@ -85,15 +82,15 @@ export default function OwnerLoginPage() {
         console.error("Aucun token reçu dans la réponse");
         setError("Erreur de connexion: aucun token reçu");
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Erreur lors de la connexion:", error);
 
       if (error.status === 401) {
         setError("Numéro de téléphone ou mot de passe incorrect");
       } else if (error.status === 422) {
-        setError("Numéro de téléphone invalide ou mt de passe incorrect");
+        setError("Numéro de téléphone invalide ou mot de passe incorrect");
       } else if (error.status === 500) {
-        setError("Numéro de téléphone invalide ou mt de passe incorrect");
+        setError("Numéro de téléphone invalide ou mot de passe incorrect");
       } else {
         setError(error.message || "Une erreur inattendue est survenue");
       }
@@ -102,7 +99,7 @@ export default function OwnerLoginPage() {
     }
   };
 
-  const handleInputChange = (field: keyof typeof formData, value: string) => {
+  const handleInputChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -131,14 +128,19 @@ export default function OwnerLoginPage() {
         <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
           <CardHeader className="space-y-1">
             <div className="flex items-center space-x-2">
-              <Link href="/">
-                <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
-                  <ArrowLeft className="w-4 h-4" />
-                </Button>
-              </Link>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-slate-400 hover:text-white"
+                onClick={() => router.push("/")}
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
               <CardTitle className="text-2xl text-white">Connexion</CardTitle>
             </div>
-            <CardDescription className="text-slate-400">Connectez-vous à votre espace propriétaire</CardDescription>
+            <CardDescription className="text-slate-400">
+              Connectez-vous à votre espace propriétaire
+            </CardDescription>
           </CardHeader>
           <CardContent>
             {showSuccessMessage && (
@@ -174,7 +176,10 @@ export default function OwnerLoginPage() {
                     <SelectContent className="bg-slate-700 text-white">
                       {countryCodes.map((country) => (
                         <SelectItem key={country.code} value={country.code}>
-                          {country.code} {country.name}
+                          <span className="flex items-center space-x-2">
+                            <span>{country.flag}</span>
+                            <span>{country.code}</span>
+                          </span>
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -182,7 +187,7 @@ export default function OwnerLoginPage() {
                   <Input
                     id="phoneNumber"
                     type="tel"
-                    placeholder="123456789"
+                    placeholder="Entrer votre numéro de téléphone"
                     value={formData.phoneNumber}
                     onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
                     className="flex-1 bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
@@ -218,9 +223,6 @@ export default function OwnerLoginPage() {
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </Button>
                 </div>
-                <Link href="/syndic/forgotPassword" className="text-sm text-amber-400 hover:text-amber-300">
-                  Mot de passe oublié ?
-                </Link>
               </div>
 
               <Button
@@ -234,10 +236,7 @@ export default function OwnerLoginPage() {
 
             <div className="mt-6 text-center">
               <p className="text-slate-400">
-                Pas encore de compte propriétaire ?{" "}
-                <Link href="/syndic/register" className="text-amber-400 hover:text-amber-300">
-                  S'inscrire
-                </Link>
+                Besoin d'aide ? Contactez l'équipe Welqo.
               </p>
             </div>
           </CardContent>
@@ -246,4 +245,3 @@ export default function OwnerLoginPage() {
     </div>
   );
 }
-

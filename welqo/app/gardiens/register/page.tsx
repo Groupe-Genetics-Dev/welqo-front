@@ -14,23 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 
 const countryCodeOptions = [
-  { code: "+33", country: "France", flag: "🇫🇷" },
-  { code: "+1", country: "États-Unis", flag: "🇺🇸" },
-  { code: "+44", country: "Royaume-Uni", flag: "🇬🇧" },
-  { code: "+49", country: "Allemagne", flag: "🇩🇪" },
-  { code: "+39", country: "Italie", flag: "🇮🇹" },
-  { code: "+34", country: "Espagne", flag: "🇪🇸" },
-  { code: "+32", country: "Belgique", flag: "🇧🇪" },
-  { code: "+41", country: "Suisse", flag: "🇨🇭" },
-  { code: "+31", country: "Pays-Bas", flag: "🇳🇱" },
-  { code: "+43", country: "Autriche", flag: "🇦🇹" },
-  { code: "+351", country: "Portugal", flag: "🇵🇹" },
-  { code: "+212", country: "Maroc", flag: "🇲🇦" },
-  { code: "+213", country: "Algérie", flag: "🇩🇿" },
-  { code: "+216", country: "Tunisie", flag: "🇹🇳" },
-  { code: "+221", country: "Sénégal", flag: "🇸🇳" },
-  { code: "+225", country: "Côte d'Ivoire", flag: "🇨🇮" },
-  { code: "+237", country: "Cameroun", flag: "🇨🇲" },
+  { code: "+221", country: "Sénégal", flag: "🇸🇳" }
 ];
 
 export default function GuardRegisterPage() {

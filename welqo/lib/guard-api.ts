@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_BASE_URL = "https://welqo-api.onrender.com/api/v1";
 
 // Types corrigés et ajustés au backend
 export interface GuardBase {

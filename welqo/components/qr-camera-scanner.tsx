@@ -10,7 +10,12 @@ interface QRCameraScannerProps {
   onActiveChange: (active: boolean) => void
 }
 
-export function QRCameraScanner({ onScanSuccess, onError, isActive, onActiveChange }: QRCameraScannerProps) {
+export function QRCameraScanner({
+  onScanSuccess,
+  onError,
+  isActive,
+  onActiveChange
+}: QRCameraScannerProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
@@ -18,7 +23,8 @@ export function QRCameraScanner({ onScanSuccess, onError, isActive, onActiveChan
   const [isInitializing, setIsInitializing] = useState(false)
   const [hasPermission, setHasPermission] = useState<boolean | null>(null)
 
-  // Fonction pour décoder le QR code depuis le canvas
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+
   const decodeQRFromCanvas = useCallback(async (canvas: HTMLCanvasElement): Promise<string | null> => {
     try {
       const jsQR = (await import("jsqr")).default
@@ -35,7 +41,6 @@ export function QRCameraScanner({ onScanSuccess, onError, isActive, onActiveChan
     }
   }, [])
 
-  // Fonction pour scanner le QR code depuis la vidéo
   const scanQRCode = useCallback(async () => {
     if (!videoRef.current || !canvasRef.current) return
 
@@ -45,69 +50,51 @@ export function QRCameraScanner({ onScanSuccess, onError, isActive, onActiveChan
 
     if (!context || video.readyState !== video.HAVE_ENOUGH_DATA) return
 
-    // Ajuster la taille du canvas à la vidéo
     canvas.width = video.videoWidth
     canvas.height = video.videoHeight
 
-    // Dessiner la frame vidéo sur le canvas
     context.drawImage(video, 0, 0, canvas.width, canvas.height)
 
-    // Tenter de décoder le QR code
     const qrData = await decodeQRFromCanvas(canvas)
     if (qrData) {
-      console.log("🎯 QR Code détecté:", qrData)
       onScanSuccess(qrData)
-      stopCamera() // Arrêter après détection
+      stopCamera()
     }
   }, [decodeQRFromCanvas, onScanSuccess])
 
-  // Démarrer la caméra
   const startCamera = useCallback(async () => {
     setIsInitializing(true)
 
     try {
-      console.log("🎥 Démarrage de la caméra...")
 
-      // Vérifier les permissions
       const permissionStatus = await navigator.permissions.query({ name: "camera" as PermissionName })
-      console.log("📋 Statut permission caméra:", permissionStatus.state)
 
-      // Configurations de caméra à essayer
-      const constraints = [
-        {
-          video: {
-            facingMode: "environment",
-            width: { ideal: 640 },
-            height: { ideal: 480 },
-          },
-        },
-        {
-          video: {
-            facingMode: "user",
-            width: { ideal: 640 },
-            height: { ideal: 480 },
-          },
-        },
-        {
-          video: {
-            width: { ideal: 640 },
-            height: { ideal: 480 },
-          },
-        },
-        { video: true }, // Fallback simple
-      ]
+      const baseConstraints = isMobile
+        ? { width: { ideal: 1280 }, height: { ideal: 720 } }
+        : { width: { ideal: 640 }, height: { ideal: 480 } }
+
+      const constraints = isMobile
+        ? [
+            { video: { facingMode: { exact: "environment" }, ...baseConstraints } },
+            { video: { facingMode: "environment", ...baseConstraints } },
+            { video: { ...baseConstraints } },
+            { video: true },
+          ]
+        : [
+            { video: { facingMode: "environment", ...baseConstraints } },
+            { video: { facingMode: "user", ...baseConstraints } },
+            { video: { ...baseConstraints } },
+            { video: true },
+          ]
 
       let stream: MediaStream | null = null
       let lastError: Error | null = null
 
       for (const constraint of constraints) {
         try {
-          console.log("📷 Tentative avec contrainte:", constraint)
           stream = await navigator.mediaDevices.getUserMedia(constraint)
-          console.log("✅ Stream obtenu avec succès")
           break
         } catch (error) {
-          console.log("❌ Échec avec contrainte:", error)
           lastError = error as Error
           continue
         }
@@ -120,42 +107,34 @@ export function QRCameraScanner({ onScanSuccess, onError, isActive, onActiveChan
       streamRef.current = stream
       setHasPermission(true)
 
-      // Attacher le stream à la vidéo
       if (videoRef.current) {
         videoRef.current.srcObject = stream
 
-        // Attendre que la vidéo soit prête
         await new Promise<void>((resolve, reject) => {
-          if (!videoRef.current) {
-            reject(new Error("Élément vidéo non disponible"))
-            return
-          }
-
           const video = videoRef.current
+          if (!video) return reject(new Error("Élément vidéo non disponible"))
 
           const onLoadedMetadata = () => {
             video.removeEventListener("loadedmetadata", onLoadedMetadata)
-            video.removeEventListener("error", onError)
-            console.log("✅ Métadonnées vidéo chargées")
+            video.removeEventListener("error", onErrorHandler)
             resolve()
           }
 
-          const onError = (error: Event) => {
+          const onErrorHandler = () => {
             video.removeEventListener("loadedmetadata", onLoadedMetadata)
-            video.removeEventListener("error", onError)
+            video.removeEventListener("error", onErrorHandler)
             reject(new Error("Erreur lors du chargement de la vidéo"))
           }
 
           video.addEventListener("loadedmetadata", onLoadedMetadata)
-          video.addEventListener("error", onError)
+          video.addEventListener("error", onErrorHandler)
 
           video.play().catch(reject)
         })
 
-        // Démarrer le scan périodique
-        scanIntervalRef.current = setInterval(scanQRCode, 500) // Scan toutes les 500ms
+        const scanInterval = isMobile ? 250 : 500
+        scanIntervalRef.current = setInterval(scanQRCode, scanInterval)
         onActiveChange(true)
-        console.log("🎉 Caméra active et scan démarré")
       }
     } catch (error: any) {
       console.error("💥 Erreur caméra:", error)
@@ -165,37 +144,29 @@ export function QRCameraScanner({ onScanSuccess, onError, isActive, onActiveChan
     } finally {
       setIsInitializing(false)
     }
-  }, [onError, onActiveChange, scanQRCode])
+  }, [isMobile, onError, onActiveChange, scanQRCode])
 
-  // Arrêter la caméra
   const stopCamera = useCallback(() => {
-    console.log("🛑 Arrêt de la caméra...")
 
-    // Arrêter le scan
     if (scanIntervalRef.current) {
       clearInterval(scanIntervalRef.current)
       scanIntervalRef.current = null
     }
 
-    // Arrêter le stream
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => {
         track.stop()
-        console.log("🔌 Track arrêté:", track.kind)
       })
       streamRef.current = null
     }
 
-    // Nettoyer la vidéo
     if (videoRef.current) {
       videoRef.current.srcObject = null
     }
 
     onActiveChange(false)
-    console.log("✅ Caméra arrêtée")
   }, [onActiveChange])
 
-  // Effet pour gérer l'état actif
   useEffect(() => {
     if (isActive && !streamRef.current) {
       startCamera()
@@ -204,7 +175,6 @@ export function QRCameraScanner({ onScanSuccess, onError, isActive, onActiveChan
     }
   }, [isActive, startCamera, stopCamera])
 
-  // Nettoyage au démontage
   useEffect(() => {
     return () => {
       stopCamera()
@@ -221,7 +191,6 @@ export function QRCameraScanner({ onScanSuccess, onError, isActive, onActiveChan
             height: "300px",
           }}
         >
-          {/* Vidéo */}
           <video
             ref={videoRef}
             className={`w-full h-full object-cover ${isActive ? "block" : "hidden"}`}
@@ -230,10 +199,8 @@ export function QRCameraScanner({ onScanSuccess, onError, isActive, onActiveChan
             autoPlay
           />
 
-          {/* Canvas caché pour le traitement */}
           <canvas ref={canvasRef} className="hidden" />
 
-          {/* États d'affichage */}
           {!isActive && !isInitializing && (
             <div className="flex items-center justify-center h-full text-gray-500">
               <div className="text-center">
@@ -255,7 +222,6 @@ export function QRCameraScanner({ onScanSuccess, onError, isActive, onActiveChan
           )}
         </div>
 
-        {/* Overlay de scan */}
         {isActive && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="w-48 h-48 border-2 border-blue-500 rounded-lg bg-transparent">
@@ -268,7 +234,6 @@ export function QRCameraScanner({ onScanSuccess, onError, isActive, onActiveChan
         )}
       </div>
 
-      {/* Contrôles */}
       <div className="flex gap-2">
         {!isActive ? (
           <Button onClick={startCamera} className="flex-1" disabled={isInitializing}>
@@ -292,7 +257,12 @@ export function QRCameraScanner({ onScanSuccess, onError, isActive, onActiveChan
         )}
       </div>
 
-      {/* Indicateur d'état */}
+      {isMobile && isActive && (
+        <p className="text-xs text-center text-gray-400">
+          Mode mobile activé : scan plus rapide
+        </p>
+      )}
+
       {isActive && (
         <div className="p-3 bg-green-50 rounded-lg">
           <div className="flex items-center justify-center text-green-700">
@@ -302,7 +272,6 @@ export function QRCameraScanner({ onScanSuccess, onError, isActive, onActiveChan
         </div>
       )}
 
-      {/* Statut des permissions */}
       {hasPermission === false && (
         <div className="p-3 bg-red-50 rounded-lg">
           <div className="text-red-700 text-sm text-center">
@@ -314,5 +283,4 @@ export function QRCameraScanner({ onScanSuccess, onError, isActive, onActiveChan
     </div>
   )
 }
-
 
