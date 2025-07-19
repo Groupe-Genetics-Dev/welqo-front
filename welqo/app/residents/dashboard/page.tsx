@@ -461,10 +461,6 @@ export default function DashboardPage() {
                         <SelectItem value="240">4 heures</SelectItem>
                         <SelectItem value="480">8 heures</SelectItem>
                         <SelectItem value="720">12 heures</SelectItem>
-                        <SelectItem value="1440">24 heures</SelectItem>
-                        <SelectItem value="2880">48 heures</SelectItem>
-                        <SelectItem value="4320">3 jours</SelectItem>
-                        <SelectItem value="10080">7 jours</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

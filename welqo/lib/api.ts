@@ -167,6 +167,7 @@ class ApiClient {
     phone_number: string
     appartement: string
     password: string
+    resident: string
   }) {
     return this.request("/users/register", {
       method: "POST",

@@ -15,8 +15,6 @@ import { useToast } from "@/hooks/use-toast";
 
 const countryCodeOptions = [
   { code: "+221", country: "Sénégal", flag: "🇸🇳" },
-  { code: "+225", country: "Côte d'Ivoire", flag: "🇨🇮" },
-  { code: "+237", country: "Cameroun", flag: "🇨🇲" },
 ];
 
 export default function RegisterPage() {
@@ -31,6 +29,7 @@ export default function RegisterPage() {
     appartement: "",
     password: "",
     confirmPassword: "",
+    resident: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -68,6 +67,15 @@ export default function RegisterPage() {
       return;
     }
 
+    if (formData.resident !== "welqo") {
+      const message = "Le code résident est invalide. Veuillez entrer un code resident valide.";
+      setErrorMessage(message);
+      showToast(message, "error");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+
     setIsLoading(true);
 
     try {
@@ -76,6 +84,7 @@ export default function RegisterPage() {
         phone_number: fullPhoneNumber,
         appartement: formData.appartement,
         password: formData.password,
+        resident: formData.resident,
       });
 
       if (response.error) {
@@ -221,6 +230,19 @@ export default function RegisterPage() {
                     required
                   />
                 </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="resident" className="text-white">
+                  Code résident
+                </Label>
+                <Input
+                  id="resident"
+                  placeholder="Entrer votre code résident"
+                  value={formData.resident}
+                  onChange={(e) => setFormData({ ...formData, resident: e.target.value })}
+                  className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
+                  required
+                />
               </div>
 
               <div className="space-y-2">
